@@ -14,12 +14,21 @@ import br.univali.cc.prog3.banco.exceptions.ValorNegativoException;
 import java.util.Scanner;
 
 public class CaixaEletronico {
+    // Referência ao controlador do banco, que gerencia as operações bancárias.
     private BancoController controller;
 
+    /*
+     Construtor da classe CaixaEletronico.
+     Recebe como parâmetro uma instância de BancoController para permitir a interação com os serviços do banco.
+    */
     public CaixaEletronico(BancoController banco) {
         this.controller = banco;
     }
-    
+
+    /*
+     Exibe o menu principal do caixa eletrônico e gerencia as opções do usuário.
+     O menu é exibido repetidamente até que o usuário escolha a opção de sair ('7').
+     */
     public void menu() {
         char opcao;
         do {
@@ -46,13 +55,23 @@ public class CaixaEletronico {
             
         } while (opcao != '7');
     }
-    
+
+    /*
+     Método auxiliar para ler um valor do console.
+     Recebe como parâmetro um rótulo (String) para exibir ao usuário.
+     Retorna a String lida do console.
+     */
     private String lerValor(String rotulo) {
         Scanner leitor = new Scanner(System.in);
         System.out.print(rotulo+": ");
         return leitor.nextLine();
     }
 
+    /*
+     Cria uma nova conta corrente normal.
+     Solicita o saldo inicial ao usuário e tenta criar a conta usando o BancoController.
+     Exibe mensagens de sucesso ou de erro, caso ocorram exceções.
+    */
     private void criarContaNormal() {
         double saldo = Double.parseDouble(lerValor("Informe o saldo inicial"));
         try{
@@ -65,7 +84,11 @@ public class CaixaEletronico {
         }
 
     }
-
+    /*
+     Cria uma nova conta corrente especial.
+     Solicita o saldo inicial ao usuário e tenta criar a conta usando o BancoController.
+     Exibe mensagens de sucesso ou de erro, caso ocorram exceções.
+    */
     private void criarContaEspecial() {
         double saldo = Double.parseDouble(lerValor("Informe o saldo inicial"));
         double limite = Double.parseDouble(lerValor("Informe o limite"));
@@ -78,7 +101,11 @@ public class CaixaEletronico {
             System.out.println("Não é possivel fazer depositos com números negativos!");
         }
     }
-
+    /*
+    Realiza um depósito em uma conta.
+    Solicita o número da conta e o valor do depósito ao usuário.
+    Tenta realizar o depósito usando o BancoController e exibe mensagens de sucesso ou de erro, caso ocorram exceções.
+    */
     private void depositar() {
         int numero = Integer.parseInt(lerValor("Digite o numero da conta"));
         double valor = Double.parseDouble(lerValor("Informe o valor"));
@@ -91,7 +118,11 @@ public class CaixaEletronico {
         }
 
     }
-
+    /*
+     Realiza um saque de uma conta.
+     Solicita o número da conta e o valor do saque ao usuário.
+     Tenta realizar o saque usando o BancoController e exibe mensagens de sucesso ou de erro, caso ocorram exceções.
+     */
     private void sacar() {
         int numero = Integer.parseInt(lerValor("Digite o numero da conta"));
         double valor = Double.parseDouble(lerValor("Informe o valor"));
@@ -107,6 +138,11 @@ public class CaixaEletronico {
 
     }
 
+    /*
+     Realiza uma transferência entre duas contas.
+     Solicita os números das contas de origem e destino, e o valor da transferência ao usuário.
+     Tenta realizar a transferência usando o BancoController e exibe mensagens de sucesso ou de erro, caso ocorram exceções.
+    */
     private void transferir() {
         int numeroOrigem = Integer.parseInt(lerValor("Digite o numero da conta de origem"));
         int numeroDestino = Integer.parseInt(lerValor("Digite o numero da conta de destino"));
@@ -123,6 +159,12 @@ public class CaixaEletronico {
 
     }
 
+    /*
+     Emite o extrato de uma conta específica.
+     Solicita o número da conta ao usuário.
+     Exibe as informações do banco e tenta emitir o extrato usando o BancoController
+     Exibe mensagens de erro caso a conta não exista.
+    */
     private void emitirExtrato() {
         int numero = Integer.parseInt(lerValor("Digite o numero da conta"));
         System.out.println("Numero da conta: " + numero);

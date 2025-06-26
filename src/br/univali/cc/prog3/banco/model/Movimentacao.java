@@ -5,6 +5,10 @@
  */
 package br.univali.cc.prog3.banco.model;
 
+/*
+    Classe responsável pelo armazenamento e processamento de dados relacionados as movimentações de uma conta.
+ */
+
 public class Movimentacao {
     private final String descricao;
     private final char tipo;
