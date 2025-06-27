@@ -63,8 +63,18 @@ public class CaixaEletronico {
      */
     private String lerValor(String rotulo) {
         Scanner leitor = new Scanner(System.in);
-        System.out.print(rotulo+": ");
-        return leitor.nextLine();
+        String entrada;
+
+        do {
+            System.out.print(rotulo + ": ");
+            entrada = leitor.nextLine();
+
+            if (entrada.trim().isEmpty()) {
+                System.out.println("Entrada inválida. Por favor, digite um valor.");
+            }
+        } while (entrada.trim().isEmpty());
+
+        return entrada;
     }
 
     /*
@@ -111,6 +121,7 @@ public class CaixaEletronico {
         double valor = Double.parseDouble(lerValor("Informe o valor"));
         try {
             controller.depositar(numero, valor);
+            System.out.println("Valor depositado com sucesso!");
         } catch (ValorNegativoException e) {
             System.out.println("Não é possivel fazer depositos com números negativos!");
         } catch (ContaInexistenteException e) {

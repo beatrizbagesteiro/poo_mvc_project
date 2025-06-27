@@ -12,10 +12,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class BancoService {
-    // Um mapa para armazenar as contas, onde a chave é o número da conta e o valor é o objeto ContaCorrente.
-    private Map<Integer, ContaCorrente> contas = new HashMap<>();
-    // Um contador para gerar o próximo número de conta disponível.
-    private int proximaConta = 0;
     // A instância da instituição bancária associada a este serviço.
     private Banco instituicao;
 
@@ -35,13 +31,14 @@ public class BancoService {
                         ValorNegativoException se o saldo inicial for negativo.
     */
     public int criarConta(double saldoInicial) throws ContaDuplicadaException, ValorNegativoException {
-        int numeroConta = proximaConta +1;
+        int numeroConta = instituicao.getProximaConta() +1;
         try{
             localizarConta(numeroConta);
             throw new ContaDuplicadaException();
         } catch (ContaInexistenteException e) {
             ContaCorrente cc = new ContaCorrente(numeroConta, saldoInicial);
-            contas.put(numeroConta, cc);
+            instituicao.adicionarConta(cc);
+            instituicao.incrementarProximaConta();
             return numeroConta;
         }
     }
@@ -54,13 +51,14 @@ public class BancoService {
                          ValorNegativoException se o saldo inicial ou o limite for negativo.
     */
     public int criarConta(double saldoInicial, double limite) throws ContaDuplicadaException, ValorNegativoException{
-        int numeroConta = proximaConta +1;
+        int numeroConta = instituicao.getProximaConta() +1;
         try{
             localizarConta(numeroConta);
             throw new ContaDuplicadaException();
         } catch (ContaInexistenteException e) {
             ContaCorrente cc = new ContaCorrente(numeroConta, saldoInicial, limite);
-            contas.put(numeroConta, cc);
+            instituicao.adicionarConta(cc);
+            instituicao.incrementarProximaConta();
             return numeroConta;
         }
     }
@@ -119,8 +117,9 @@ public class BancoService {
      Lança a exceção: ContaInexistenteException se a conta não for encontrada.
     */
     private ContaCorrente localizarConta(int numero) throws ContaInexistenteException{
-        if(contas.containsKey(numero)){
-            return contas.get(numero);
+        ContaCorrente conta = instituicao.getConta(numero);
+        if( conta != null ){
+            return conta;
         }
         throw new ContaInexistenteException();
     }

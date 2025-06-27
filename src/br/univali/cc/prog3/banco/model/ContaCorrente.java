@@ -70,8 +70,9 @@ public class ContaCorrente {
         if (valor > 0) {
             this.saldo += valor;
             this.criarMovimentacao("Deposito", 'C', valor);
+        }else{
+            throw new ValorNegativoException();
         }
-        throw new ValorNegativoException();
     }
 
     /*
