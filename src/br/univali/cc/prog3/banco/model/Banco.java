@@ -1,5 +1,9 @@
 package br.univali.cc.prog3.banco.model;
 
+import br.univali.cc.prog3.banco.exceptions.ContaDuplicadaException;
+import br.univali.cc.prog3.banco.exceptions.ContaInexistenteException;
+import br.univali.cc.prog3.banco.exceptions.ValorNegativoException;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,11 +37,37 @@ public class Banco {
         this.proximaConta++;
     }
 
-    public ContaCorrente getConta(int numeroConta) {
-        return contas.get(numeroConta);
+    public ContaCorrente localizarConta(int numero) throws ContaInexistenteException{
+        ContaCorrente conta = contas.get(numero);
+        if( conta != null ){
+            return conta;
+        }
+        throw new ContaInexistenteException();
     }
 
     public void adicionarConta(ContaCorrente conta) {
         contas.put(conta.getNumeroConta(), conta);
+    }
+
+    public int criarConta(double saldoInicial) throws ContaDuplicadaException, ValorNegativoException {
+        int novoNumeroConta = this.proximaConta + 1;
+        if (contas.containsKey(novoNumeroConta)) {
+            throw new ContaDuplicadaException("Conta com número " + novoNumeroConta + " já existe no banco.");
+        }
+        ContaCorrente novaConta = new ContaCorrente(novoNumeroConta, saldoInicial);
+        this.adicionarConta(novaConta);
+        this.incrementarProximaConta();
+        return novoNumeroConta;
+    }
+
+    public int criarConta(double saldoInicial, double limite) throws ContaDuplicadaException, ValorNegativoException {
+        int novoNumeroConta = this.proximaConta + 1;
+        if (contas.containsKey(novoNumeroConta)) {
+            throw new ContaDuplicadaException("Conta com número " + novoNumeroConta + " já existe no banco.");
+        }
+        ContaCorrente novaConta = new ContaCorrente(novoNumeroConta, saldoInicial, limite);
+        this.adicionarConta(novaConta);
+        this.incrementarProximaConta();
+        return novoNumeroConta;
     }
 }

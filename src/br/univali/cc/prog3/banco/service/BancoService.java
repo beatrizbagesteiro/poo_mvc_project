@@ -1,5 +1,4 @@
 package br.univali.cc.prog3.banco.service;
-
 import br.univali.cc.prog3.banco.exceptions.ContaDuplicadaException;
 import br.univali.cc.prog3.banco.exceptions.ContaInexistenteException;
 import br.univali.cc.prog3.banco.exceptions.SaldoInsuficienteException;
@@ -7,9 +6,6 @@ import br.univali.cc.prog3.banco.exceptions.ValorNegativoException;
 import br.univali.cc.prog3.banco.model.Banco;
 import br.univali.cc.prog3.banco.model.ContaCorrente;
 
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class BancoService {
     // A instância da instituição bancária associada a este serviço.
@@ -23,44 +19,12 @@ public class BancoService {
         this.instituicao = instituicaoBanco;
     }
 
-    /*
-     Cria uma nova conta corrente com um saldo inicial.
-     Recebe como parâmetro o saldo inicial da nova conta.
-     Retorna o número da conta recém-criada.
-     Lança as exceções: ContaDuplicadaException se uma conta com o número gerado já existir.
-                        ValorNegativoException se o saldo inicial for negativo.
-    */
     public int criarConta(double saldoInicial) throws ContaDuplicadaException, ValorNegativoException {
-        int numeroConta = instituicao.getProximaConta() +1;
-        try{
-            localizarConta(numeroConta);
-            throw new ContaDuplicadaException();
-        } catch (ContaInexistenteException e) {
-            ContaCorrente cc = new ContaCorrente(numeroConta, saldoInicial);
-            instituicao.adicionarConta(cc);
-            instituicao.incrementarProximaConta();
-            return numeroConta;
-        }
+        return instituicao.criarConta(saldoInicial); // Delega para o Banco
     }
 
-    /*
-      Cria uma nova conta corrente com um saldo inicial e um limite.
-      Recebe como parâmetro o saldo inicial da nova conta e o limite.
-      Retorna o número da conta recém-criada.
-      Lança as exceções: ContaDuplicadaException se uma conta com o número gerado já existir.
-                         ValorNegativoException se o saldo inicial ou o limite for negativo.
-    */
-    public int criarConta(double saldoInicial, double limite) throws ContaDuplicadaException, ValorNegativoException{
-        int numeroConta = instituicao.getProximaConta() +1;
-        try{
-            localizarConta(numeroConta);
-            throw new ContaDuplicadaException();
-        } catch (ContaInexistenteException e) {
-            ContaCorrente cc = new ContaCorrente(numeroConta, saldoInicial, limite);
-            instituicao.adicionarConta(cc);
-            instituicao.incrementarProximaConta();
-            return numeroConta;
-        }
+    public int criarConta(double saldoInicial, double limite) throws ContaDuplicadaException, ValorNegativoException {
+        return instituicao.criarConta(saldoInicial, limite); // Delega para o Banco
     }
 
     /*
@@ -70,7 +34,7 @@ public class BancoService {
                         ContaInexistenteException se a conta não for encontrada.
     */
     public void depositar(int numeroConta, double valor) throws ValorNegativoException, ContaInexistenteException {
-        ContaCorrente conta = localizarConta(numeroConta);
+        ContaCorrente conta = instituicao.localizarConta(numeroConta);
         conta.depositar(valor);
     }
 
@@ -83,7 +47,7 @@ public class BancoService {
                         ValorNegativoException se o valor do saque for negativo.
     */
     public void sacar(int numeroConta, double valor) throws SaldoInsuficienteException, ContaInexistenteException, ValorNegativoException {
-        ContaCorrente conta = localizarConta(numeroConta);
+        ContaCorrente conta = instituicao.localizarConta(numeroConta);
         conta.sacar(valor);
     }
 
@@ -95,8 +59,8 @@ public class BancoService {
                         ValorNegativoException se o valor da transferência for negativo.
     */
     public void transferencia(int numeroContaOrigem, int numeroContaDestino, double valor) throws SaldoInsuficienteException, ContaInexistenteException, ValorNegativoException{
-        ContaCorrente contaOrigem = localizarConta(numeroContaOrigem);
-        ContaCorrente contaDestino = localizarConta(numeroContaDestino);
+        ContaCorrente contaOrigem = instituicao.localizarConta(numeroContaOrigem);
+        ContaCorrente contaDestino = instituicao.localizarConta(numeroContaDestino);
         contaOrigem.sacar(valor);
         contaDestino.depositar(valor);
     }
@@ -107,21 +71,8 @@ public class BancoService {
      Lança a exceção: ContaInexistenteException se a conta não for encontrada.
     */
     public String emitirExtrato(int numeroConta) throws ContaInexistenteException{
-        ContaCorrente conta = localizarConta(numeroConta);
+        ContaCorrente conta = instituicao.localizarConta(numeroConta);
         return conta.emitirExtrato();
-    }
-
-    /*
-     Localiza e retorna uma conta corrente pelo seu número. É um método auxiliar privado.
-     Recebe como parâmetro o número da conta a ser localizada e retorna o objeto ContaCorrente se encontrado.
-     Lança a exceção: ContaInexistenteException se a conta não for encontrada.
-    */
-    private ContaCorrente localizarConta(int numero) throws ContaInexistenteException{
-        ContaCorrente conta = instituicao.getConta(numero);
-        if( conta != null ){
-            return conta;
-        }
-        throw new ContaInexistenteException();
     }
 
     /*
